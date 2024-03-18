@@ -1,10 +1,7 @@
-import React, {useContext, useEffect} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import React from 'react';
 import {Spinner} from "@material-tailwind/react";
 
 const LoginSuccess = () => {
-    const params = useParams()
-    const navigate = useNavigate()
     return (
         <div className="flex justify-center items-center h-screen">
             <div className='flex items-center justify-center'>

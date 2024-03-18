@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Spinner } from "@material-tailwind/react";
 import banner from "../../assets/images/login-banner.png";
@@ -8,11 +8,10 @@ import { Helmet } from "react-helmet";
 import {motion} from "framer-motion";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [hiddenPass, setHiddenPass] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();

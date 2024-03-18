@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import "./App.css";
+import LoginSuccess from "./pages/LoginSuccess/LoginSuccess";
 
 function App() {
 	const [user, setUser] = useState(null);
@@ -37,8 +37,9 @@ function App() {
 					element={user ? <Navigate to="/" /> : <Login />}
 				/>
 				<Route
-					path="/signup"
-					element={user ? <Navigate to="/" /> : <Signup />}
+					exact
+					path="/login-success/:tokenGoogle"
+					element={user ? <Navigate to="/" /> : < LoginSuccess />}
 				/>
 			</Routes>
 		</div>

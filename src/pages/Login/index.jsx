@@ -3,9 +3,9 @@ import styles from "./styles.module.css";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google'; // Import GoogleLogin and GoogleOAuthProvider components
 
 function Login() {
-
   const onSuccess = (credentialResponse) => {
     console.log(credentialResponse);
+    // Handle successful login here
   };
 
   const onError = () => {

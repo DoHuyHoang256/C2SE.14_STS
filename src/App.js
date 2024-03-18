@@ -38,7 +38,7 @@ function App() {
 				/>
 				<Route
 					exact
-					path="/login-success/:tokenGoogle"
+					path="/login-success"
 					element={user ? <Navigate to="/" /> : < LoginSuccess />}
 				/>
 			</Routes>

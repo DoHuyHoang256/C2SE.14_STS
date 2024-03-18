@@ -1,25 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import banner from "../../assets/images/login-banner.png";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google'; // Import GoogleOAuthProvider
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 const Login = () => {
-
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const onSuccess = (credentialResponse) => {
-    console.log(credentialResponse); // Log credentialResponse to console
-    navigate("/login-success");
+  const onSuccess = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse?.credential);
+      const response = await axios.get(`http://localhost:4000/api/users/email`);
+      const userEmails = response.data;
+
+      if (userEmails.includes(decoded.email)) {
+        setSuccessMessage("Đăng nhập thành công!");
+        navigate("/login-success");
+      } else {
+        window.alert('Tài khoản không có quyền truy cập!');
+      }
+    } catch (error) {
+      window.alert('Đăng nhập thất bại!');
+    }
   };
 
   const onError = () => {
     console.log('Google Login Failed');
-    // Handle Google login error here
+    // Xử lý lỗi đăng nhập Google ở đây nếu cần
+    
   };
 
   return (

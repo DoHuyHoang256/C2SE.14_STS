@@ -1,10 +1,14 @@
 const express = require('express');
-const db = require('./db'); // Import module handling database connection
+const db = require('./db');
+const cors = require('cors'); // Import module handling database connection
 
 // Create an Express application
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+app.use(cors());
+
+// API endpoint để lấy danh sách các email từ cơ sở dữ liệu
 app.get('/api/users/email', (req, res) => {
   db.query('SELECT email FROM users', (error, result) => {
     if (error) {
@@ -13,26 +17,6 @@ app.get('/api/users/email', (req, res) => {
     } else {
       const emails = result.rows.map(row => row.email);
       res.json(emails);
-    }
-  });
-});
-
-app.get('/auth/google/callback', (req, res) => {
-  // Assuming you have received the email from Google OAuth and stored it in req.query.email
-  const userEmail = req.query.email; // Use a sample email if no email is provided from Google OAuth
-
-  // Check if the email exists in the database
-  db.query('SELECT * FROM users WHERE email = $1', [userEmail], (error, result) => {
-    if (error) {
-      console.error('Error executing query:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    } else {
-      // If user with this email exists in the database
-      if (result.rows.length > 0) {
-        res.json({ message: 'User exists in the database' });
-      } else {
-        res.status(404).json({ message: 'User does not exist in the database' });
-      }
     }
   });
 });

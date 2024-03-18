@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import "./App.css";
 import LoginSuccess from "./pages/LoginSuccess/LoginSuccess";
 

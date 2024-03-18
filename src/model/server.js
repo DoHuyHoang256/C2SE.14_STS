@@ -1,23 +1,12 @@
 const express = require('express');
-const { Pool } = require('pg');
-
-// Load environment variables
-require('dotenv').config();
+const db = require('./db'); // Import module handling database connection
 
 // Create an Express application
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Configure PostgreSQL connection
-const pool = new Pool({
-  connectionString: "postgres://admin:Q1wJG4pmcdf4mFuFSazG3Wwrsb0aMhDQ@dpg-cnnuk0djm4es73ce026g-a.singapore-postgres.render.com/smart_tracking_ystem",
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
 app.get('/api/users/email', (req, res) => {
-  pool.query('SELECT email FROM users', (error, result) => {
+  db.query('SELECT email FROM users', (error, result) => {
     if (error) {
       console.error('Error executing query:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -30,10 +19,10 @@ app.get('/api/users/email', (req, res) => {
 
 app.get('/auth/google/callback', (req, res) => {
   // Assuming you have received the email from Google OAuth and stored it in req.query.email
-  const userEmail = req.query.email; // Sử dụng email mẫu 'test@example.com' nếu không có email từ Google OAuth
+  const userEmail = req.query.email; // Use a sample email if no email is provided from Google OAuth
 
   // Check if the email exists in the database
-  pool.query('SELECT * FROM users WHERE email = $1', [userEmail], (error, result) => {
+  db.query('SELECT * FROM users WHERE email = $1', [userEmail], (error, result) => {
     if (error) {
       console.error('Error executing query:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -48,14 +37,53 @@ app.get('/auth/google/callback', (req, res) => {
   });
 });
 
-// Test PostgreSQL connection
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Error connecting to PostgreSQL:', err);
-  } else {
-    console.log('Connected to PostgreSQL');
-    console.log('PostgreSQL current timestamp:', res.rows[0].now);
+// API endpoint to retrieve all information from users and account_role tables
+app.get('/api/allInfo', (req, res) => {
+  db.query('SELECT * FROM users', (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result.rows);
+    }
+  });
+});
+
+// API endpoint to retrieve account_role for a specific user_id
+app.get('/api/accountRole/:user_id', (req, res) => {
+  const userId = req.params.user_id;
+
+  db.query('SELECT account.account_role FROM account WHERE account.user_id = $1', [userId], (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      if (result.rows.length > 0) {
+        res.json(result.rows[0].account_role);
+      } else {
+        res.status(404).json({ message: 'User not found in account table' });
+      }
+    }
+  });
+});
+
+app.post('/api/users', (req, res) => {
+  const { full_name, user_code, date_of_birth, phone_number, address, email } = req.body;
+
+  // Check if all required fields are provided
+  if (!full_name || !user_code || !date_of_birth || !phone_number || !address || !email) {
+    return res.status(400).json({ error: 'Please provide all required fields: full_name, user_code, date_of_birth, phone_number, address, email' });
   }
+
+  // Insert new user into the database
+  db.query('INSERT INTO users (full_name, user_code, date_of_birth, phone_number, address, email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [full_name, user_code, date_of_birth, phone_number, address, email], (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.status(201).json(result.rows[0]); 
+    }
+  });
 });
 
 // Start the server

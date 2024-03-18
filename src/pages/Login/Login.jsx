@@ -12,7 +12,8 @@ import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const onSuccess = async (credentialResponse) => {
     try {

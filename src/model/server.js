@@ -51,6 +51,8 @@ app.get('/api/accountRole/:user_id', (req, res) => {
   });
 });
 
+const { v4: uuidv4 } = require('uuid');
+
 app.post('/api/users', (req, res) => {
   const { full_name, user_code, date_of_birth, phone_number, address, email } = req.body;
 
@@ -59,8 +61,10 @@ app.post('/api/users', (req, res) => {
     return res.status(400).json({ error: 'Please provide all required fields: full_name, user_code, date_of_birth, phone_number, address, email' });
   }
 
+  const user_id = uuidv4(); // Generate a unique user_id
+
   // Insert new user into the database
-  db.query('INSERT INTO users (full_name, user_code, date_of_birth, phone_number, address, email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [full_name, user_code, date_of_birth, phone_number, address, email], (error, result) => {
+  db.query('INSERT INTO users (user_id, full_name, user_code, date_of_birth, phone_number, address, email) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [user_id, full_name, user_code, date_of_birth, phone_number, address, email], (error, result) => {
     if (error) {
       console.error('Error executing query:', error);
       return res.status(500).json({ error: 'Internal Server Error' });
@@ -69,6 +73,7 @@ app.post('/api/users', (req, res) => {
     }
   });
 });
+
 
 app.get('/api/transactions', (req, res) => {
   db.query('SELECT * FROM transaction_history', (error, result) => {
@@ -80,6 +85,25 @@ app.get('/api/transactions', (req, res) => {
     }
   });
 });
+
+// API endpoint to retrieve transaction data by transaction_id
+app.get('/api/transactions/:transaction_id', (req, res) => {
+  const transactionId = req.params.transaction_id;
+
+  db.query('SELECT * FROM transaction_history WHERE transaction_id = $1', [transactionId], (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      } else {
+        res.status(404).json({ message: 'Transaction not found' });
+      }
+    }
+  });
+});
+
 
 
 // Start the server

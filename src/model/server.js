@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
+app.use(express.json()); // Middleware để phân tích dữ liệu JSON
 
 // API endpoint để lấy danh sách các email từ cơ sở dữ liệu
 app.get('/api/users/email', (req, res) => {
@@ -51,30 +52,60 @@ app.get('/api/accountRole/:user_id', (req, res) => {
   });
 });
 
-const { v4: uuidv4 } = require('uuid');
-
+// API endpoint to insert new user
 app.post('/api/users', (req, res) => {
+  // Check if req.body exists
+  if (!req.body) {
+    return res.status(400).json({ error: 'Yêu cầu không có dữ liệu' });
+  }
+
   const { full_name, user_code, date_of_birth, phone_number, address, email } = req.body;
 
   // Check if all required fields are provided
   if (!full_name || !user_code || !date_of_birth || !phone_number || !address || !email) {
-    return res.status(400).json({ error: 'Please provide all required fields: full_name, user_code, date_of_birth, phone_number, address, email' });
+    return res.status(400).json({ error: 'Vui lòng cung cấp tất cả các trường bắt buộc: full_name, user_code, date_of_birth, phone_number, address, email' });
   }
 
-  const user_id = uuidv4(); // Generate a unique user_id
+  // Insert new user into the database without specifying user_id
+  db.query('INSERT INTO users (full_name, user_code, date_of_birth, phone_number, address, email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', 
+    [full_name, user_code, date_of_birth, phone_number, address, email], 
+    (error, result) => {
+      if (error) {
+        console.error('Lỗi thực thi truy vấn:', error);
+        return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+      } else {
+        res.status(201).json(result.rows[0]); 
+      }
+    }
+  );
+});
 
-  // Insert new user into the database
-  db.query('INSERT INTO users (user_id, full_name, user_code, date_of_birth, phone_number, address, email) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [user_id, full_name, user_code, date_of_birth, phone_number, address, email], (error, result) => {
+// API endpoint to delete user by user_id
+app.delete('/api/users/:user_id', (req, res) => {
+  const userId = req.params.user_id;
+
+  // Check if userId is provided
+  if (!userId) {
+    return res.status(400).json({ error: 'Vui lòng cung cấp user_id' });
+  }
+
+  // Delete user from the database based on user_id
+  db.query('DELETE FROM users WHERE user_id = $1', [userId], (error, result) => {
     if (error) {
-      console.error('Error executing query:', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Lỗi thực thi truy vấn:', error);
+      return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     } else {
-      res.status(201).json(result.rows[0]); 
+      if (result.rowCount > 0) {
+        res.json({ message: 'Người dùng đã được xóa thành công' });
+      } else {
+        res.status(404).json({ message: 'Không tìm thấy người dùng' });
+      }
     }
   });
 });
 
 
+// API endpoint to retrieve all transactions
 app.get('/api/transactions', (req, res) => {
   db.query('SELECT * FROM transaction_history', (error, result) => {
     if (error) {
@@ -103,8 +134,6 @@ app.get('/api/transactions/:transaction_id', (req, res) => {
     }
   });
 });
-
-
 
 // Start the server
 app.listen(PORT, () => {

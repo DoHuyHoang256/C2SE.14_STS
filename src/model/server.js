@@ -70,6 +70,18 @@ app.post('/api/users', (req, res) => {
   });
 });
 
+app.get('/api/transactions', (req, res) => {
+  db.query('SELECT * FROM transaction_history', (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result.rows);
+    }
+  });
+});
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

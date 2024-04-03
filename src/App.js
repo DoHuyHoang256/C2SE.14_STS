@@ -5,7 +5,10 @@ import Home from "./pages/Home";
 import Login from "./pages/Login/Login";
 import "./App.css";
 import LoginSuccess from "./pages/LoginSuccess/LoginSuccess";
-
+import Siderbar from "./components/Siderbar/Siderbar";
+import Pagination from "./components/Pagination/Pagination";
+import ForgotPassword from "./pages/ForgotPassWord/ForgotPassword ";
+import DetailUserAccount from "./pages/Admin/DetailAccout";
 function App() {
 	const [user, setUser] = useState(null);
 
@@ -40,6 +43,27 @@ function App() {
 					exact
 					path="/login-success/:tokenGoogle"
 					element={user ? <Navigate to="/" /> : < LoginSuccess />}
+				/>
+				<Route
+					exact
+					path="/siderbar"
+					element={user ? <Navigate to="/" /> : < Siderbar />}
+				/>
+				<Route
+					exact
+					path="/pagination"
+					element={user ? <Navigate to="/" /> : < Pagination />}
+				/>
+				<Route
+					exact
+					path="/forgot-password"
+					element={user ? <Navigate to="/" /> : < ForgotPassword />}
+				/>
+
+				<Route
+					exact
+					path="/admin/detail-accout"
+					element={user ? <Navigate to="/" /> : < DetailUserAccount />}
 				/>
 			</Routes>
 		</div>

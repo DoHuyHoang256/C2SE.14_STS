@@ -8,7 +8,9 @@ import LoginSuccess from "./pages/LoginSuccess/LoginSuccess";
 import Siderbar from "./components/Siderbar/Siderbar";
 import Pagination from "./components/Pagination/Pagination";
 import ForgotPassword from "./pages/ForgotPassWord/ForgotPassword ";
-import DetailUserAccount from "./pages/Admin/DetailAccout";
+import DetailUserAccount from "./pages/Admin/DetailAccount";
+import ManagerAccount from "./pages/ManagerAccout/ManagerAccout";
+import HistoryTransaction from "./pages/HistoryTransaction/HistoryTransaction";
 function App() {
 	const [user, setUser] = useState(null);
 
@@ -62,8 +64,16 @@ function App() {
 
 				<Route
 					exact
-					path="/admin/detail-accout"
+					path="/admin/detail-account"
 					element={user ? <Navigate to="/" /> : < DetailUserAccount />}
+				/>	<Route
+					exact
+					path="/admin/manager-account"
+					element={user ? <Navigate to="/" /> : < ManagerAccount />}
+				/>/>	<Route
+					exact
+					path="/transaction-history"
+					element={user ? <Navigate to="/" /> : < HistoryTransaction />}
 				/>
 			</Routes>
 		</div>

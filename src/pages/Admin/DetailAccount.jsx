@@ -28,21 +28,18 @@ const DetailUserAccount = () => {
     const fileRef = useRef();
 
     return (
-        <div className="bg-[#F3F7FA] w-full h-full p-8">
-            <div className="bg-[#ffffff] w-full h-full p-2">
-                <div className="button rounded-full text-center bg-[#F9FBFF] items-center justify-center w-[60px] h-[35px] p-1">
-                    <button>
-                        <Link to={'/admin/manage-account'}>
-                            <FontAwesomeIcon icon={faArrowLeft}/>
-                        </Link>
-                    </button>
+        <div className="bg-[#F3F7FA] w-full h-full p-2">
+            <div className="bg-[#ffffff] w-full h-full p-1">
+                <div className="button rounded-full text-center bg-[#F9FBFF] items-center justify-center w-[60px] h-[30px] p-1">
+                    <Link to='/admin/manager-account'>
+                        <FontAwesomeIcon icon={faArrowLeft}/>
+                    </Link>
                 </div>
-                <div className="bg-[#ffffff] w-full h-full ">
-                    <div className="max-w-screen-xl container mx-auto my-9 grid grid-cols-12 gap-4">
-                            <div className="mx-10 py-1 px-1 shadow-2xl p-8" style={{ borderRadius: "20px" }}>
-                                <div className="grid grid-cols-10 lg:grid-cols-2 gap-10 bg-white p-6" style={{ borderRadius: "30px" }}>
-                                   <div>
-                                       <h1 className="text-2xl font-medium text-black text-start mb-6">
+                <div className="bg-[#ffffff] w-full">
+                    <div className="max-w-screen-xl container mx-16 " style={{ borderRadius: "20px" }}>
+                            <div className="grid grid-cols-10 lg:grid-cols-2 gap-10 bg-white p-8" style={{ borderRadius: "30px" }}>
+                                <div>
+                                       <h1 className="text-2xl font-medium text-black text-start ">
                                            Thông tin chi tiết
                                        </h1>
                                    </div>
@@ -173,8 +170,6 @@ const DetailUserAccount = () => {
 
                         </div>
                     </div>
-            </div>
-
         </div>
     );
 };

@@ -128,7 +128,7 @@ const Sidebar = () => {
                         </button>
                         <ul className={`${dropdownStates.accoutDropdown || router.pathname.includes("/manager-account") ? "block" : "hidden"}`}>
                             <li>
-                                <Link to="/vet/manage-appointments" className={`${router.pathname.includes("/manager-account") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
                                     Danh sách tài khoản
                                 </Link>
                             </li>

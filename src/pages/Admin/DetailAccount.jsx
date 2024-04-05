@@ -6,6 +6,8 @@ import { Spinner } from "@material-tailwind/react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { format } from 'date-fns';
+
 
 
 function formatDate(dateString) {
@@ -26,10 +28,12 @@ const DetailUserAccount = () => {
     const [editedFullName, setEditedFullName] = useState('');
     const [editedPhoneNumber, setEditedPhoneNumber] = useState('');
     const [editedCode, setEditedCode] = useState('');
-    const [editedAddress, setEditedAddress] = useState('');
+    const [editedAddress, setEditedAddress] = useState('' );
     const [genders, setGenders] = useState([]);
     const [selectedGender, setSelectedGender] = useState('');
     const [editedDateOfBirth, setEditedDateOfBirth] = useState('');
+    const [selectedGenderId, setSelectedGenderId] = useState('');
+    const [selectedRoleId, setSelectedRoleId] = useState('');
 
 
     const { userId } = useParams();
@@ -39,8 +43,16 @@ const DetailUserAccount = () => {
             try {
                 const response = await axios.get(`http://localhost:4000/api/users/${userId}`);
                 setDetailUser(response.data);
+                setEditedEmail(response.data.email);
+                setEditedFullName(response.data.full_name);
                 setEditedDateOfBirth(response.data.date_of_birth);
+                setEditedPhoneNumber(response.data.phone_number);
+                setEditedCode(response.data.user_code);
+                setEditedAddress(response.data.address);
+                setSelectedGenderId(response.data.gender);
+                setSelectedRoleId(response.data.role);
                 setLoading(false);
+                
             } catch (error) {
                 setError(error.message);
                 setLoading(false);
@@ -93,6 +105,14 @@ const DetailUserAccount = () => {
 
     const handleRoleChange = (e) => {
         setSelectedRole(e.target.value);
+        const selectedRoleObject = roles.find(role => role.role_name === e.target.value);
+        setSelectedRoleId(selectedRoleObject ? selectedRoleObject.role_id : '');
+    };
+
+    const handleGenderChange = (e) => {
+        setSelectedGender(e.target.value);
+        const selectedGenderObject = genders.find(gender => gender.gender_name === e.target.value);
+        setSelectedGenderId(selectedGenderObject ? selectedGenderObject.gender_id : '');
     };
 
     const handleEmailChange = (e) => {
@@ -119,14 +139,27 @@ const DetailUserAccount = () => {
         setEditedDateOfBirth(date);
     };
     
-    const handleGenderChange = (e) => {
-        setSelectedGender(e.target.value);
-        const selectedGenderObject = genders.find(gender => gender.gender_id === e.target.value);
-        setDetailUser(prevState => ({
-            ...prevState,
-            gender: selectedGenderObject ? selectedGenderObject.gender_id : '',
-            gender_name: selectedGenderObject ? selectedGenderObject.gender_name : ''
-        }));
+   
+
+    const handleSaveChanges = async () => {
+        try {
+
+            const formattedDate = format(new Date(editedDateOfBirth), 'yyyy-MM-dd\'T\'HH:mm:ss.SSSxxx');
+            const response = await axios.put(`http://localhost:4000/api/users/${userId}`, {
+                email: editedEmail,
+                full_name: editedFullName,
+                phone_number: editedPhoneNumber,
+                user_code: editedCode,
+                address: editedAddress,
+                gender: selectedGenderId,
+                role: selectedRoleId,
+                date_of_birth: formattedDate,
+            });
+    
+            console.log("Save changes success:", response.data);
+        } catch (error) {
+            console.error("Error saving changes:", error);
+        }
     };
 
     if (loading) {
@@ -279,9 +312,12 @@ const DetailUserAccount = () => {
                                         <button className="py-2 px-5 bg-red-500 hover:bg-red-700 text-white rounded-sm">
                                             Khóa tài khoản
                                         </button>
-                                        <button className="py-2 px-5 bg-green-500 hover:bg-green-700 text-white rounded-sm">
-                                            Lưu thay đổi
-                                        </button>
+                                        <button
+                                        className="py-2 px-5 bg-green-500 hover:bg-green-700 text-white rounded-sm"
+                                        onClick={handleSaveChanges}
+                                    >
+                                        Lưu thay đổi
+                                    </button>
                                     </div>
                                 </div>
                             </div>

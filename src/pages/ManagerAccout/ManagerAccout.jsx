@@ -8,14 +8,13 @@ import { Link } from "react-router-dom";
 
 const ManageUserAccount = () => {
     const [users, setUsers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         axios.get("http://localhost:4000/api/allInfo")
             .then(response => {
                 const userData = response.data.map(user => {
-                    // Check if user object contains role_id property
                     if (user.role) {
-                        // Gọi API để lấy role_name dựa trên role_id
                         return axios.get(`http://localhost:4000/api/roleName/${user.role}`)
                             .then(roleResponse => {
                                 return {
@@ -39,7 +38,20 @@ const ManageUserAccount = () => {
                 console.error('Error fetching data:', error);
             });
     }, []); 
-    
+
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+    }
+
+    // Hàm để loại bỏ dấu từ chuỗi
+    const removeAccents = (str) => {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const filteredUsers = users.filter(user =>
+        removeAccents(user.full_name.toLowerCase()).includes(removeAccents(searchTerm.toLowerCase())) ||
+        user.user_code.toLowerCase().includes(removeAccents(searchTerm.toLowerCase()))
+    );
 
     return (
         <div className="bg-[#F3F7FA] w-full h-full p-8">
@@ -62,6 +74,8 @@ const ManageUserAccount = () => {
                                         className="search-input w-9/12 font-bold outline-none bg-transparent pl-2"
                                         type="text"
                                         placeholder="Tìm kiếm theo họ và tên hoặc tên người dùng..."
+                                        value={searchTerm}
+                                        onChange={handleSearch}
                                     />
                                 </div>
                                 <div className="bg-[#212143] border border-black rounded-e-2xl">
@@ -83,7 +97,7 @@ const ManageUserAccount = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.map((user, index) => (
+                                    {filteredUsers.map((user, index) => (
                                         <tr key={index} className="text-gray-500">
                                             <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.full_name}</td>
                                             <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.role_name}</td>

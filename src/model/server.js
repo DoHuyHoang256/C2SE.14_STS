@@ -34,23 +34,27 @@ app.get('/api/allInfo', (req, res) => {
   });
 });
 
-// API endpoint to retrieve account_role for a specific user_id
-app.get('/api/accountRole/:user_id', (req, res) => {
-  const userId = req.params.user_id;
+// API endpoint để lấy role_name từ role_id
+app.get('/api/roleName/:roleId', (req, res) => {
+  const roleId = req.params.roleId;
 
-  db.query('SELECT account.account_role FROM account WHERE account.user_id = $1', [userId], (error, result) => {
+  // Truy vấn cơ sở dữ liệu để lấy role_name từ role_id
+  db.query('SELECT role_name FROM role WHERE role_id = $1', [roleId], (error, result) => {
     if (error) {
       console.error('Error executing query:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     } else {
       if (result.rows.length > 0) {
-        res.json(result.rows[0].account_role);
+        res.json({ role_name: result.rows[0].role_name });
       } else {
-        res.status(404).json({ message: 'User not found in account table' });
+        res.status(404).json({ message: 'Role not found' });
       }
     }
   });
 });
+
+
+
 
 // API endpoint to insert new user
 app.post('/api/users', (req, res) => {

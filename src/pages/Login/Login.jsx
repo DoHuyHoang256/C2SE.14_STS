@@ -23,7 +23,7 @@ const Login = () => {
 
       if (userEmails.includes(decoded.email)) {
         setSuccessMessage("Đăng nhập thành công!");
-        navigate("/login-success");
+        navigate("/admin/manager-account");
       } else {
         window.alert('Tài khoản không có quyền truy cập!');
       }

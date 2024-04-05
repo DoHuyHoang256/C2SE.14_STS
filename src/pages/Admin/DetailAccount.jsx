@@ -4,6 +4,9 @@ import { Link, useParams } from 'react-router-dom';
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Spinner } from "@material-tailwind/react";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -19,6 +22,15 @@ const DetailUserAccount = () => {
     const [error, setError] = useState(null);
     const [roles, setRoles] = useState([]);
     const [selectedRole, setSelectedRole] = useState('');
+    const [editedEmail, setEditedEmail] = useState('');
+    const [editedFullName, setEditedFullName] = useState('');
+    const [editedPhoneNumber, setEditedPhoneNumber] = useState('');
+    const [editedCode, setEditedCode] = useState('');
+    const [editedAddress, setEditedAddress] = useState('');
+    const [genders, setGenders] = useState([]);
+    const [selectedGender, setSelectedGender] = useState('');
+    const [editedDateOfBirth, setEditedDateOfBirth] = useState('');
+
 
     const { userId } = useParams();
 
@@ -27,6 +39,7 @@ const DetailUserAccount = () => {
             try {
                 const response = await axios.get(`http://localhost:4000/api/users/${userId}`);
                 setDetailUser(response.data);
+                setEditedDateOfBirth(response.data.date_of_birth);
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -55,10 +68,65 @@ const DetailUserAccount = () => {
     
         fetchRoles();
     }, [detailUser.role, roles]);
+
+    useEffect(() => {
+        const fetchGenders = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/api/gender');
+                setGenders(response.data);
+            } catch (error) {
+                console.error('Error fetching genders:', error);
+            }
+        };
+    
+        fetchGenders();
+    }, []); // Sử dụng mảng rỗng để chỉ gọi API một lần khi component được mount
+    
+    useEffect(() => {
+        // Tìm giới tính tương ứng với gender_id của người dùng và gán cho selectedGender
+        const userGender = genders.find(gender => gender.gender_id === detailUser.gender);
+        if (userGender) {
+            setSelectedGender(userGender.gender_name);
+        }
+    }, [detailUser.gender, genders]); 
     
 
     const handleRoleChange = (e) => {
         setSelectedRole(e.target.value);
+    };
+
+    const handleEmailChange = (e) => {
+        setEditedEmail(e.target.value);
+    };
+
+    const handleFullNameChange = (e) => {
+        setEditedFullName(e.target.value);
+    };
+
+    const handlePhoneNumberChange = (e) => {
+        setEditedPhoneNumber(e.target.value);
+    };
+
+    const handleCodeChange = (e) => {
+        setEditedCode(e.target.value);
+    };
+
+    const handleAddressChange = (e) => {
+        setEditedAddress(e.target.value);
+    };
+
+    const handleDateOfBirthChange = (date) => {
+        setEditedDateOfBirth(date);
+    };
+    
+    const handleGenderChange = (e) => {
+        setSelectedGender(e.target.value);
+        const selectedGenderObject = genders.find(gender => gender.gender_id === e.target.value);
+        setDetailUser(prevState => ({
+            ...prevState,
+            gender: selectedGenderObject ? selectedGenderObject.gender_id : '',
+            gender_name: selectedGenderObject ? selectedGenderObject.gender_name : ''
+        }));
     };
 
     if (loading) {
@@ -79,70 +147,102 @@ const DetailUserAccount = () => {
                 </div>
                 <div className="bg-[#ffffff] w-full">
                     <div className="max-w-screen-xl container mx-16 " style={{ borderRadius: "20px" }}>
-                        <div className="grid grid-cols-10 lg:grid-cols-2 gap-10 bg-white p-8" style={{ borderRadius: "30px" }}>
+                    <div className="grid grid-cols-10 lg:grid-cols-2 gap-10 bg-white p-8 w-full" style={{ borderRadius: "30px" }}>
                             <div>
                                 <h1 className="text-2xl font-medium text-black text-start ">
                                     Thông tin chi tiết
                                 </h1>
                             </div>
                             <div></div>
-                            <div className="grid-cols-12">
+                            <div className="grid-cols-12 w-full">
                                 <div className="col-span-10" key={detailUser.id}>
-                                    <div className="grid grid-cols-11 bg-white-200 p-1 mx-8">
-                                        <label className="text-gray-700 text-sm font-bold text-left col-span-3">
-                                            Email:
-                                        </label>
-                                        <label className="text-gray-700  text-sm font-bold  col-span-8 text-left ">
-                                            {detailUser.email}
-                                        </label>
-                                    </div>
-                                    <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
-                                        <label className="text-gray-700 text-sm font-bold text-left col-span-3">
-                                            Họ và tên:
-                                        </label>
-                                        <label className="text-gray-700 text-sm font-bold text-left col-span-8">
-                                            {detailUser.full_name}
-                                        </label>
-                                    </div>
+                                <div className="grid grid-cols-11 bg-white-200 p-1 mx-8">
+                                    <label className="text-gray-700 text-sm font-bold text-left col-span-3">
+                                        Email:
+                                    </label>
+                                    <input
+                                       type="text"
+                                       className="text-gray-700 text-sm font-bold col-span-8"
+                                       style={{ width: "100%" }}
+                                       value={editedEmail || detailUser.email}
+                                       onChange={handleEmailChange}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
+                                    <label className="text-gray-700 text-sm font-bold text-left col-span-3">
+                                        Họ và tên:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="text-gray-700 text-sm font-bold text-left col-span-8"
+                                        style={{ width: "100%" }}
+                                        value={editedFullName || detailUser.full_name}
+                                        onChange={handleFullNameChange}
+                                    />
+                                </div>
                                     <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
                                         <label className="text-gray-700 text-sm font-bold text-left col-span-3">
                                             Ngày sinh:
                                         </label>
-                                        <label className="text-gray-700  text-sm font-bold  col-span-8 text-left">
-                                            {detailUser && detailUser.date_of_birth ? formatDate(detailUser.date_of_birth) : "2002"}
-                                        </label>
+                                        <DatePicker
+                                            selected={editedDateOfBirth ? new Date(editedDateOfBirth) : null}
+                                            onChange={date => setEditedDateOfBirth(date)}
+                                            dateFormat="dd/MM/yyyy"
+                                            className="text-gray-700 text-sm font-bold text-left col-span-8"
+                                            style={{ width: "100%" }}
+                                        />
                                     </div>
                                     <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
                                         <label className="text-gray-700 text-sm font-bold text-left col-span-3">
                                             Giới tính:
                                         </label>
-                                        <label className="text-gray-700 text-sm font-bold text-left col-span-8">
-                                            {detailUser && detailUser.gender ? detailUser.gender : "Chưa chọn giới tính"}
-                                        </label>
+                                        <select
+                                            className="text-gray-700 text-sm font-bold text-left col-span-8"
+                                            value={selectedGender}
+                                            onChange={handleGenderChange}
+                                        >
+                                            {genders.map(gender => (
+                                                <option key={gender.gender_id} value={gender.gender_name}>
+                                                    {gender.gender_name}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
                                         <label className="text-gray-700 text-sm font-bold text-left col-span-3">
-                                            Phone:
+                                            Số điện thoại:
                                         </label>
-                                        <label className="text-gray-700 text-sm font-bold text-left col-span-8">
-                                            {detailUser.phone_number}
-                                        </label>
+                                        <input
+                                            type="text"
+                                            className="text-gray-700 text-sm font-bold text-left col-span-8"
+                                            style={{ width: "100%" }}
+                                            value={editedPhoneNumber || detailUser.phone_number}
+                                            onChange={handlePhoneNumberChange}
+                                        />
                                     </div>
                                     <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
                                         <label className="text-gray-700 text-sm font-bold text-left col-span-3">
                                             Code:
                                         </label>
-                                        <label className="text-gray-700 text-sm font-bold text-left col-span-8">
-                                            {detailUser.user_code}
-                                        </label>
+                                        <input
+                                            type="text"
+                                            className="text-gray-700 text-sm font-bold text-left col-span-8"
+                                            style={{ width: "100%" }}
+                                            value={editedCode || detailUser.user_code}
+                                            onChange={handleCodeChange}
+                                        />
                                     </div>
-                                    <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
+                                   <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
                                         <label className="text-gray-700 text-sm font-bold text-left col-span-3">
                                             Địa chỉ:
                                         </label>
-                                        <label className="text-gray-700 text-sm font-bold col-span-8 text-left">
-                                            {detailUser && detailUser.address ? `${detailUser.address} ${detailUser.ward} ${detailUser.district} ${detailUser.city}` : "Chưa có địa chỉ"}
-                                        </label>
+                                        <input
+                                            type="text"
+                                            className="text-gray-700 text-sm font-bold col-span-8 text-left"
+                                            style={{ width: "100%" }}
+                                            value={editedAddress || `${detailUser.address || ''} ${detailUser.ward || ''} ${detailUser.district || ''} ${detailUser.city || ''}`}
+                                            onChange={handleAddressChange}
+                                        />
                                     </div>
                                     <div className="grid grid-cols-11 border-t border-gray-600 bg-white-200 p-3 mx-6">
                                         <label className="text-gray-700 text-sm font-bold text-left col-span-3">
@@ -153,7 +253,6 @@ const DetailUserAccount = () => {
                                             value={selectedRole}
                                             onChange={handleRoleChange}
                                         >
-                                            <option value="">Chọn vai trò</option>
                                             {roles.map(role => (
                                                 <option key={role.role_id} value={role.role_name}>
                                                     {role.role_name}

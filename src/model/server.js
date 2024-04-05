@@ -66,6 +66,19 @@ app.get('/api/roles', (req, res) => {
   });
 });
 
+//endpoint API để lấy tất cả dữ liệu từ bảng "gender"
+app.get('/api/gender', (req, res) => {
+  db.query('SELECT * FROM gender', (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result.rows);
+    }
+  });
+});
+
+
 // API endpoint to insert new user
 app.post('/api/users', (req, res) => {
   // Check if req.body exists

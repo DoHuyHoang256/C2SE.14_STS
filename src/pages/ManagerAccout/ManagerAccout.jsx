@@ -53,6 +53,10 @@ const ManageUserAccount = () => {
         user.user_code.toLowerCase().includes(removeAccents(searchTerm.toLowerCase()))
     );
 
+    const handleDetailClick = (userId) => {
+        console.log(userId);
+    };
+    
     return (
         <div className="bg-[#F3F7FA] w-full h-full p-8">
             <div className="grid grid-cols-12 gap-10">
@@ -107,10 +111,15 @@ const ManageUserAccount = () => {
                                                     <FontAwesomeIcon icon={faBuildingColumns} />
                                                 </Link>
                                             </td>
-                                            <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
+                                            {/* <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
                                                 <Link to="/admin/detail-account">
                                                     <FontAwesomeIcon icon={faCircleInfo} />
                                                 </Link>
+                                            </td> */}
+                                            <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
+                                            <Link to={`/admin/detail-account/${user.user_id}`}>
+                                                <FontAwesomeIcon icon={faCircleInfo} />
+                                            </Link>
                                             </td>
                                         </tr>
                                     ))}

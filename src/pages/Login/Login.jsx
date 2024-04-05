@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 const Login = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Sử dụng useNavigate để nhận hàm chuyển hướng
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -23,7 +23,8 @@ const Login = () => {
 
       if (userEmails.includes(decoded.email)) {
         setSuccessMessage("Đăng nhập thành công!");
-        navigate("/admin/manager-account");
+        
+        navigate("/admin/manager-account"); // Chuyển hướng đến trang mong muốn sau khi đăng nhập thành công
       } else {
         window.alert('Tài khoản không có quyền truy cập!');
       }

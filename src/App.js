@@ -64,13 +64,15 @@ function App() {
 
 				<Route
 					exact
-					path="/admin/detail-account"
+					path="/admin/detail-account/:userId"
 					element={user ? <Navigate to="/" /> : < DetailUserAccount />}
-				/>	<Route
+				/>	
+				<Route
 					exact
 					path="/admin/manager-account"
 					element={user ? <Navigate to="/" /> : < ManagerAccount />}
-				/>/>	<Route
+				/>
+				<Route
 					exact
 					path="/transaction-history"
 					element={user ? <Navigate to="/" /> : < HistoryTransaction />}

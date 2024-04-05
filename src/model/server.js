@@ -53,8 +53,18 @@ app.get('/api/roleName/:roleId', (req, res) => {
   });
 });
 
-
-
+// API endpoint để lấy danh sách vai trò từ bảng role
+app.get('/api/roles', (req, res) => {
+  // Truy vấn cơ sở dữ liệu để lấy tất cả các vai trò
+  db.query('SELECT * FROM role', (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result.rows);
+    }
+  });
+});
 
 // API endpoint to insert new user
 app.post('/api/users', (req, res) => {
@@ -83,6 +93,26 @@ app.post('/api/users', (req, res) => {
     }
   );
 });
+
+// API endpoint để lấy thông tin của một user từ cơ sở dữ liệu dựa trên userId
+app.get('/api/users/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  // Truy vấn cơ sở dữ liệu để lấy thông tin của user từ userId
+  db.query('SELECT * FROM users WHERE user_id = $1', [userId], (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    }
+  });
+});
+
 
 // API endpoint to delete user by user_id
 app.delete('/api/users/:user_id', (req, res) => {

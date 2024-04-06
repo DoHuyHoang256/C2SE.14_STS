@@ -74,7 +74,7 @@ function App() {
 				/>
 				<Route
 					exact
-					path="/transaction-history"
+					path="/transaction-history/:userId"
 					element={user ? <Navigate to="/" /> : < HistoryTransaction />}
 				/>
 			</Routes>

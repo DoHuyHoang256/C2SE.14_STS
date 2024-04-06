@@ -21,18 +21,6 @@ const TranscationHistory = () => {
                                 <div style={{ textAlign: "left" }}>
                                     <h1 className="text-3xl font-bold">Lịch sử giao dịch</h1>
                                 </div>
-                                <div className="search-box flex bg-[#F9FAFB] w-[600px] h-[45px] border border-black rounded-s-2xl px-4">
-                                    <input
-                                        className="search-input w-9/12 font-bold outline-none bg-transparent pl-2"
-                                        type="text"
-                                        placeholder="Tìm kiếm theo họ và tên hoặc tên người dùng..."
-                                    />
-                                </div>
-                                <div className="bg-[#212143] border border-black rounded-e-2xl">
-                                    <button className="search-button p-1 w-[105px] h-[45px] text-white">
-                                        <FontAwesomeIcon icon={faSearch} /> Tìm kiếm
-                                    </button>
-                                </div>
                             </div>
                         </div>
                         <div className="w-auto mx-4 h-full text-left bg-white rounded-lg shadow-lg py-14">

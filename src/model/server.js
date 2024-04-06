@@ -126,6 +126,40 @@ app.get('/api/users/:userId', (req, res) => {
   });
 });
 
+// API endpoint để cập nhật thông tin của người dùng dựa trên userId
+app.put('/api/users/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  // Kiểm tra nếu req.body không tồn tại
+  if (!req.body) {
+    return res.status(400).json({ error: 'Yêu cầu không có dữ liệu' });
+  }
+
+  const { full_name, user_code, date_of_birth, phone_number, address, email, gender, role } = req.body;
+
+  // Kiểm tra xem tất cả các trường bắt buộc đã được cung cấp chưa
+  if (!full_name || !user_code || !date_of_birth || !phone_number || !address || !email || !gender || !role) {
+    return res.status(400).json({ error: 'Vui lòng cung cấp tất cả các trường bắt buộc: full_name, user_code, date_of_birth, phone_number, address, email, gender, role' });
+  }
+
+  // Cập nhật thông tin của người dùng vào cơ sở dữ liệu
+  db.query('UPDATE users SET full_name = $1, user_code = $2, date_of_birth = $3, phone_number = $4, address = $5, email = $6, gender = $7, role = $8 WHERE user_id = $9 RETURNING *', 
+    [full_name, user_code, date_of_birth, phone_number, address, email, gender, role, userId], 
+    (error, result) => {
+      if (error) {
+        console.error('Lỗi thực thi truy vấn:', error);
+        return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+      } else {
+        if (result.rows.length > 0) {
+          res.json(result.rows[0]); // Trả về thông tin người dùng đã được cập nhật
+        } else {
+          res.status(404).json({ message: 'Người dùng không tồn tại' });
+        }
+      }
+    }
+  );
+});
+
 
 // API endpoint to delete user by user_id
 app.delete('/api/users/:user_id', (req, res) => {

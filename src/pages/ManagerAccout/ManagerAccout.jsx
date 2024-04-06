@@ -107,15 +107,10 @@ const ManageUserAccount = () => {
                                             <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.role_name}</td>
                                             <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.user_code}</td>
                                             <td className="py-2 px-14 text-red-500 text-2xl border-t border-gray-300 bg-white">
-                                                <Link to="/transaction-history">
+                                                <Link to={`/transaction-history/${user.user_id}`}>
                                                     <FontAwesomeIcon icon={faBuildingColumns} />
                                                 </Link>
                                             </td>
-                                            {/* <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
-                                                <Link to="/admin/detail-account">
-                                                    <FontAwesomeIcon icon={faCircleInfo} />
-                                                </Link>
-                                            </td> */}
                                             <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
                                             <Link to={`/admin/detail-account/${user.user_id}`}>
                                                 <FontAwesomeIcon icon={faCircleInfo} />

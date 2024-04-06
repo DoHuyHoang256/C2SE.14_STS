@@ -24,7 +24,7 @@
     "react-dom": "^18.1.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.5",
     "sequelize": "^6.37.1",
     "tailwindcss": "^3.4.1",
@@ -32,8 +32,8 @@
   },
   "scripts": {
     "start:client": "react-scripts start",
-    "start:server": "node src/model/server.js",
-    "start": "npm-run-all --parallel start:client start:server",
+    "start:server": "",
+    "start": "react-scripts start",
     "build": "npm i",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
